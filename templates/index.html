@@ -25,6 +25,18 @@
       </form>
     </section>
 
+    {% if fastest_lap %}
+    <div class="fastest-card">
+      <div class="fastest-label">⚡ Fastest Lap</div>
+      <div class="fastest-name">{{ fastest_lap.name }}</div>
+      <div class="fastest-team">{{ fastest_lap.team }}</div>
+      <div class="fastest-details">
+        <span>Lap {{ fastest_lap.lap }}</span>
+        <span>{{ fastest_lap.time }}s</span>
+      </div>
+    </div>
+    {% endif %}
+
     <div class="grid">
 
       <section class="card">

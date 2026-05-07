@@ -20,20 +20,42 @@ def get_lap_times(session_key, top5_drivers):
             ]
     return lap_data
 
+def get_fastest_lap(session_key, driver_map):
+    res = requests.get(f"{OPENF1_BASE}/laps?session_key={session_key}", timeout=15)
+    if res.status_code != 200:
+        return None
+    laps = res.json()
+    fastest = None
+    for lap in laps:
+        if not lap.get('lap_duration'):
+            continue
+        if fastest is None or lap['lap_duration'] < fastest['lap_duration']:
+            fastest = lap
+    if not fastest:
+        return None
+    drv_num = fastest['driver_number']
+    d = driver_map.get(drv_num, {})
+    return {
+        'name': d.get('full_name', f"Driver #{drv_num}"),
+        'team': d.get('team_name', 'Unknown'),
+        'lap': fastest['lap_number'],
+        'time': f"{int(fastest['lap_duration'] // 60)}:{fastest['lap_duration'] % 60:06.3f}",
+    }
+
 def get_race_results(year, round_num):
     sessions = requests.get(f"{OPENF1_BASE}/sessions?year={year}&session_type=Race", timeout=15)
     if sessions.status_code != 200:
-        return None, [], {}, {}
+        return None, [], {}, {}, None
     session_list = sessions.json()
     if not session_list or round_num > len(session_list):
-        return None, [], {}, {}
+        return None, [], {}, {}, None
     session = session_list[round_num - 1]
     session_key = session['session_key']
     race_name = session['session_name'] + " — " + session['location']
 
     positions = requests.get(f"{OPENF1_BASE}/position?session_key={session_key}", timeout=15)
     if positions.status_code != 200:
-        return race_name, [], {}, {}
+        return race_name, [], {}, {}, None
     pos_data = positions.json()
 
     final_positions = {}
@@ -60,8 +82,9 @@ def get_race_results(year, round_num):
     top5 = [r['driver_num'] for r in results[:5]]
     lap_data = get_lap_times(session_key, top5)
     top5_names = {r['driver_num']: r['name'] for r in results[:5]}
+    fastest_lap = get_fastest_lap(session_key, driver_map)
 
-    return race_name, results[:20], lap_data, top5_names
+    return race_name, results[:20], lap_data, top5_names, fastest_lap
 
 def get_schedule(year):
     res = requests.get(f"{OPENF1_BASE}/sessions?year={year}&session_type=Race", timeout=15)
@@ -75,7 +98,7 @@ def index():
     round_num = int(request.form.get('round', '1'))
 
     schedule = get_schedule(year)
-    race_name, results, lap_data, top5_names = get_race_results(year, round_num)
+    race_name, results, lap_data, top5_names, fastest_lap = get_race_results(year, round_num)
 
     return render_template('index.html',
         year=year,
@@ -85,6 +108,7 @@ def index():
         results=results,
         lap_data=lap_data,
         top5_names=top5_names,
+        fastest_lap=fastest_lap,
     )
 
 if __name__ == '__main__':
