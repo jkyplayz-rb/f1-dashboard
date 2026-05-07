@@ -87,3 +87,43 @@ td { padding: 8px; border-bottom: 1px solid #1f1f1f; }
 tr:hover td { background: #222; }
 
 .empty { color: #666; font-size: 14px; }
+
+.fastest-card {
+  background: #1a1a1a;
+  border: 1px solid #e10600;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.fastest-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #e10600;
+}
+
+.fastest-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #f0f0f0;
+}
+
+.fastest-team {
+  font-size: 13px;
+  color: #888;
+}
+
+.fastest-details {
+  margin-left: auto;
+  display: flex;
+  gap: 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #e10600;
+}
