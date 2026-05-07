@@ -32,7 +32,7 @@
       <div class="fastest-team">{{ fastest_lap.team }}</div>
       <div class="fastest-details">
         <span>Lap {{ fastest_lap.lap }}</span>
-        <span>{{ fastest_lap.time }}s</span>
+        <span>{{ fastest_lap.time }}</span>
       </div>
     </div>
     {% endif %}
@@ -87,6 +87,34 @@
             {% endfor %}
           </tbody>
         </table>
+      </section>
+
+      <section class="card full-width">
+        <h2>Pit Stops</h2>
+        {% if pit_stops %}
+        <table>
+          <thead>
+            <tr>
+              <th>Lap</th>
+              <th>Driver</th>
+              <th>Team</th>
+              <th>Stop Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in pit_stops %}
+            <tr>
+              <td>Lap {{ p.lap }}</td>
+              <td>{{ p.name }}</td>
+              <td>{{ p.team }}</td>
+              <td>{{ p.duration }}s</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="empty">No pit stop data available.</p>
+        {% endif %}
       </section>
 
       <section class="card full-width">
