@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>F1 Dashboard</title>
   <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -74,6 +75,57 @@
             {% endfor %}
           </tbody>
         </table>
+      </section>
+
+      <section class="card full-width">
+        <h2>Lap Times — Top 5 Drivers</h2>
+        {% if lap_data %}
+        <canvas id="lapChart" height="100"></canvas>
+        <script>
+          const colors = ['#e10600', '#00d2be', '#0067ff', '#ff8000', '#ffffff'];
+          const datasets = [];
+          const lapDataRaw = {{ lap_data | tojson }};
+          const namesRaw = {{ top5_names | tojson }};
+          let i = 0;
+          for (const [driverNum, laps] of Object.entries(lapDataRaw)) {
+            datasets.push({
+              label: namesRaw[driverNum] || `Driver #${driverNum}`,
+              data: laps.map(l => ({ x: l.lap, y: l.time })),
+              borderColor: colors[i % colors.length],
+              backgroundColor: 'transparent',
+              borderWidth: 2,
+              pointRadius: 2,
+              tension: 0.3
+            });
+            i++;
+          }
+          new Chart(document.getElementById('lapChart'), {
+            type: 'line',
+            data: { datasets },
+            options: {
+              parsing: false,
+              plugins: {
+                legend: { labels: { color: '#ccc' } }
+              },
+              scales: {
+                x: {
+                  type: 'linear',
+                  title: { display: true, text: 'Lap', color: '#888' },
+                  ticks: { color: '#888' },
+                  grid: { color: '#222' }
+                },
+                y: {
+                  title: { display: true, text: 'Lap Time (seconds)', color: '#888' },
+                  ticks: { color: '#888' },
+                  grid: { color: '#222' }
+                }
+              }
+            }
+          });
+        </script>
+        {% else %}
+        <p class="empty">No lap time data available.</p>
+        {% endif %}
       </section>
 
     </div>
