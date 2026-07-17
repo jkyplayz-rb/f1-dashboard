@@ -62,7 +62,7 @@ def get_pit_stops(session_key, driver_map):
     return stops
 
 def get_race_results(year, round_num):
-    sessions = requests.get(f"{OPENF1_BASE}/sessions?year={year}&session_type=Race", timeout=15)
+    sessions = requests.get(f"{OPENF1_BASE}/sessions?year={year}&session_name=Race", timeout=15)
     if sessions.status_code != 200:
         return None, [], {}, {}, None, []
     session_list = sessions.json()
@@ -107,7 +107,7 @@ def get_race_results(year, round_num):
     return race_name, results[:20], lap_data, top5_names, fastest_lap, pit_stops
 
 def get_schedule(year):
-    res = requests.get(f"{OPENF1_BASE}/sessions?year={year}&session_type=Race", timeout=15)
+    res = requests.get(f"{OPENF1_BASE}/sessions?year={year}&session_name=Race", timeout=15)
     if res.status_code != 200:
         return []
     return res.json()
