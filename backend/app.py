@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
 import requests
 
 app = Flask(__name__)
+CORS(app)
 
 OPENF1_BASE = "https://api.openf1.org/v1"
 
@@ -111,6 +113,12 @@ def get_schedule(year):
     if res.status_code != 200:
         return []
     return res.json()
+
+@app.route('/api/schedule')
+def api_schedule():
+    year = int(request.args.get('year', '2024'))
+    schedule = get_schedule(year)
+    return jsonify(schedule)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
