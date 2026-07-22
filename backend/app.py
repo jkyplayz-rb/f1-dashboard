@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
+from datetime import datetime, timezone
 import requests
 
 app = Flask(__name__)
@@ -114,6 +115,27 @@ def get_schedule(year):
         return []
     return res.json()
 
+def get_live_status():
+    res = requests.get(f"{OPENF1_BASE}/sessions?session_key=latest", timeout=15)
+    if res.status_code != 200:
+        return {'is_live': False}
+    sessions = res.json()
+    if not sessions:
+        return {'is_live': False}
+    session = sessions[0]
+    now = datetime.now(timezone.utc)
+    start = datetime.fromisoformat(session['date_start'])
+    end = datetime.fromisoformat(session['date_end'])
+    is_live = start <= now <= end
+    return {
+        'is_live': is_live,
+        'session_name': session.get('session_name'),
+        'location': session.get('location'),
+        'country_name': session.get('country_name'),
+        'date_start': session.get('date_start'),
+        'date_end': session.get('date_end'),
+    }
+
 @app.route('/api/schedule')
 def api_schedule():
     year = int(request.args.get('year', '2024'))
@@ -131,6 +153,10 @@ def api_race(year, round_num):
         'fastest_lap': fastest_lap,
         'pit_stops': pit_stops,
     })
+
+@app.route('/api/live-status')
+def api_live_status():
+    return jsonify(get_live_status())
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
