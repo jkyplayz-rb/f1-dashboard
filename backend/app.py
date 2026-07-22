@@ -120,6 +120,18 @@ def api_schedule():
     schedule = get_schedule(year)
     return jsonify(schedule)
 
+@app.route('/api/race/<int:year>/<int:round_num>')
+def api_race(year, round_num):
+    race_name, results, lap_data, top5_names, fastest_lap, pit_stops = get_race_results(year, round_num)
+    return jsonify({
+        'race_name': race_name,
+        'results': results,
+        'lap_data': lap_data,
+        'top5_names': top5_names,
+        'fastest_lap': fastest_lap,
+        'pit_stops': pit_stops,
+    })
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     year = int(request.form.get('year', '2024'))
