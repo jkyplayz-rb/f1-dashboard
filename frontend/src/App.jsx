@@ -1,3 +1,7 @@
+import { Routes, Route } from 'react-router-dom'
+import Home from './pages/Home.jsx'
+import Schedule from './pages/Schedule.jsx'
+import RaceDetail from './pages/RaceDetail.jsx'
 import './App.css'
 
 function App() {
@@ -15,7 +19,11 @@ function App() {
       </header>
 
       <main className="app-main">
-        <p>Content goes here</p>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/schedule" element={<Schedule />} />
+          <Route path="/race/:year/:round" element={<RaceDetail />} />
+        </Routes>
       </main>
     </div>
   )
