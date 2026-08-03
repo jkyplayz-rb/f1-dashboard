@@ -16,12 +16,12 @@ function Schedule() {
   }, [year])
 
   return (
-    <div>
-      <h2>{year} Race Schedule</h2>
+    <div className="schedule-page">
+      <h2 className="page-title">{year} Race Schedule</h2>
       {loading ? (
-        <p>Loading...</p>
+        <p className="muted-text">Loading...</p>
       ) : (
-        <table>
+        <table className="data-table">
           <thead>
             <tr>
               <th>Location</th>
@@ -33,8 +33,10 @@ function Schedule() {
             {races.map((race) => (
               <tr key={race.session_key}>
                 <td>{race.location}</td>
-                <td>{race.country_name}</td>
-                <td>{new Date(race.date_start).toLocaleDateString()}</td>
+                <td className="muted-text">{race.country_name}</td>
+                <td className="muted-text tabular">
+                  {new Date(race.date_start).toLocaleDateString()}
+                </td>
               </tr>
             ))}
           </tbody>
