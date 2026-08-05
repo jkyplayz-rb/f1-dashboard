@@ -159,3 +159,24 @@ body {
 .race-detail-page .page-title {
   margin-top: 24px;
 }
+
+.home-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.home-status-card {
+  max-width: 320px;
+}
+
+.home-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 14px;
+  width: fit-content;
+}
+
+.home-link:hover {
+  text-decoration: underline;
+}
