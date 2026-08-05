@@ -20,8 +20,22 @@ function RaceDetail() {
   if (!race || !race.race_name) return <p className="muted-text">No data found for this race.</p>
 
   return (
-    <div>
-      <h2 className="page-title">{race.race_name}</h2>
+    <div className="race-detail-page">
+      <h2 className="race-title">{race.race_name}</h2>
+
+      <div className="stat-card">
+        <div className="stat-label">Fastest Lap</div>
+        {race.fastest_lap ? (
+          <>
+            <div className="stat-value tabular">{race.fastest_lap.time}</div>
+            <div className="stat-sub">
+              {race.fastest_lap.name} — Lap {race.fastest_lap.lap}
+            </div>
+          </>
+        ) : (
+          <div className="stat-sub">No fastest lap data available.</div>
+        )}
+      </div>
 
       <h3 className="page-title">Race Results</h3>
       <table className="data-table">
@@ -35,22 +49,13 @@ function RaceDetail() {
         <tbody>
           {race.results.map((r) => (
             <tr key={r.driver_num}>
-              <td>{r.position}</td>
+              <td className="tabular">{r.position}</td>
               <td>{r.name}</td>
               <td className="muted-text">{r.team}</td>
             </tr>
           ))}
         </tbody>
       </table>
-
-      <h3 className="page-title">Fastest Lap</h3>
-      {race.fastest_lap ? (
-        <p>
-          {race.fastest_lap.name} — Lap {race.fastest_lap.lap} — {race.fastest_lap.time}
-        </p>
-      ) : (
-        <p className="muted-text">No fastest lap data available.</p>
-      )}
 
       <h3 className="page-title">Pit Stops</h3>
       {race.pit_stops.length > 0 ? (
