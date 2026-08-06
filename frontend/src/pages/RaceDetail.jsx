@@ -1,5 +1,22 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts'
+
+const formatLapTime = (seconds) => {
+  if (seconds == null) return ''
+  const mins = Math.floor(seconds / 60)
+  const secs = (seconds % 60).toFixed(3)
+  return `${mins}:${secs.padStart(6, '0')}`
+}
 
 function RaceDetail() {
   const { year, round } = useParams()
@@ -18,6 +35,22 @@ function RaceDetail() {
 
   if (loading) return <p className="muted-text">Loading...</p>
   if (!race || !race.race_name) return <p className="muted-text">No data found for this race.</p>
+
+  // Reshape lap_data (grouped by driver) into rows grouped by lap number, for a multi-line chart
+  const buildChartData = () => {
+    const lapMap = {}
+    Object.entries(race.lap_data || {}).forEach(([driverNum, laps]) => {
+      laps.forEach(({ lap, time }) => {
+        if (!lapMap[lap]) lapMap[lap] = { lap }
+        lapMap[lap][driverNum] = time
+      })
+    })
+    return Object.values(lapMap).sort((a, b) => a.lap - b.lap)
+  }
+
+  const chartData = buildChartData()
+  const driverNums = Object.keys(race.lap_data || {})
+  const lineColors = ['#e10600', '#f0f0f0', '#a0a0a0', '#6b6b6b', '#3a3a3a']
 
   return (
     <div className="race-detail-page">
@@ -56,6 +89,45 @@ function RaceDetail() {
           ))}
         </tbody>
       </table>
+
+      <h3 className="page-title">Lap Times — Top 5</h3>
+      {chartData.length > 0 ? (
+        <div className="chart-wrapper">
+          <ResponsiveContainer width="100%" height={320}>
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#262626" />
+              <XAxis dataKey="lap" stroke="#6b6b6b" fontSize={12} />
+              <YAxis
+                stroke="#6b6b6b"
+                fontSize={12}
+                tickFormatter={formatLapTime}
+                domain={['dataMin - 1', 'dataMax + 1']}
+              />
+              <Tooltip
+                contentStyle={{ background: '#161616', border: '1px solid #262626' }}
+                labelStyle={{ color: '#f0f0f0' }}
+                formatter={(value) => formatLapTime(value)}
+              />
+              <Legend
+                formatter={(value) => race.top5_names[value] || value}
+              />
+              {driverNums.map((num, i) => (
+                <Line
+                  key={num}
+                  type="monotone"
+                  dataKey={num}
+                  name={num}
+                  stroke={lineColors[i % lineColors.length]}
+                  dot={false}
+                  strokeWidth={1.5}
+                />
+              ))}
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      ) : (
+        <p className="muted-text">No lap time data available.</p>
+      )}
 
       <h3 className="page-title">Pit Stops</h3>
       {race.pit_stops.length > 0 ? (

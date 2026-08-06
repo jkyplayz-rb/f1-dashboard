@@ -180,3 +180,11 @@ body {
 .home-link:hover {
   text-decoration: underline;
 }
+
+.chart-wrapper {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
