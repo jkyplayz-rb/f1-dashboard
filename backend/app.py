@@ -2,16 +2,31 @@ from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from datetime import datetime, timezone
 import requests
+import time
 
 app = Flask(__name__)
 CORS(app)
 
 OPENF1_BASE = "https://api.openf1.org/v1"
 
+_cache = {}
+CACHE_TTL = 300  # 5 minutes
+
+def cached_get(url, timeout=15):
+    now = time.time()
+    if url in _cache:
+        cached_time, cached_response = _cache[url]
+        if now - cached_time < CACHE_TTL:
+            return cached_response
+    res = requests.get(url, timeout=timeout)
+    if res.status_code == 200:
+        _cache[url] = (now, res)
+    return res
+
 def get_lap_times(session_key, top5_drivers):
     lap_data = {}
     for driver_num in top5_drivers:
-        res = requests.get(f"{OPENF1_BASE}/laps?session_key={session_key}&driver_number={driver_num}", timeout=15)
+        res = cached_get(f"{OPENF1_BASE}/laps?session_key={session_key}&driver_number={driver_num}")
         if res.status_code == 200:
             laps = res.json()
             lap_data[driver_num] = [
@@ -24,7 +39,7 @@ def get_lap_times(session_key, top5_drivers):
     return lap_data
 
 def get_fastest_lap(session_key, driver_map):
-    res = requests.get(f"{OPENF1_BASE}/laps?session_key={session_key}", timeout=15)
+    res = cached_get(f"{OPENF1_BASE}/laps?session_key={session_key}")
     if res.status_code != 200:
         return None
     laps = res.json()
@@ -46,7 +61,7 @@ def get_fastest_lap(session_key, driver_map):
     }
 
 def get_pit_stops(session_key, driver_map):
-    res = requests.get(f"{OPENF1_BASE}/pit?session_key={session_key}", timeout=15)
+    res = cached_get(f"{OPENF1_BASE}/pit?session_key={session_key}")
     if res.status_code != 200:
         return []
     pits = res.json()
@@ -65,7 +80,7 @@ def get_pit_stops(session_key, driver_map):
     return stops
 
 def get_race_results(year, round_num):
-    sessions = requests.get(f"{OPENF1_BASE}/sessions?year={year}&session_name=Race", timeout=15)
+    sessions = cached_get(f"{OPENF1_BASE}/sessions?year={year}&session_name=Race")
     if sessions.status_code != 200:
         return None, [], {}, {}, None, []
     session_list = sessions.json()
@@ -75,7 +90,7 @@ def get_race_results(year, round_num):
     session_key = session['session_key']
     race_name = session['session_name'] + " — " + session['location']
 
-    positions = requests.get(f"{OPENF1_BASE}/position?session_key={session_key}", timeout=15)
+    positions = cached_get(f"{OPENF1_BASE}/position?session_key={session_key}")
     if positions.status_code != 200:
         return race_name, [], {}, {}, None, []
     pos_data = positions.json()
@@ -85,7 +100,7 @@ def get_race_results(year, round_num):
         drv = entry['driver_number']
         final_positions[drv] = entry['position']
 
-    drivers = requests.get(f"{OPENF1_BASE}/drivers?session_key={session_key}", timeout=15)
+    drivers = cached_get(f"{OPENF1_BASE}/drivers?session_key={session_key}")
     driver_map = {}
     if drivers.status_code == 200:
         for d in drivers.json():
@@ -110,7 +125,7 @@ def get_race_results(year, round_num):
     return race_name, results[:20], lap_data, top5_names, fastest_lap, pit_stops
 
 def get_schedule(year):
-    res = requests.get(f"{OPENF1_BASE}/sessions?year={year}&session_name=Race", timeout=15)
+    res = cached_get(f"{OPENF1_BASE}/sessions?year={year}&session_name=Race")
     if res.status_code != 200:
         return []
     return res.json()
