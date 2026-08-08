@@ -22,18 +22,28 @@ function RaceDetail() {
   const { year, round } = useParams()
   const [race, setRace] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     setLoading(true)
+    setError(null)
     fetch(`http://127.0.0.1:5000/api/race/${year}/${round}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to load race data')
+        return res.json()
+      })
       .then((data) => {
         setRace(data)
+        setLoading(false)
+      })
+      .catch((err) => {
+        setError(err.message)
         setLoading(false)
       })
   }, [year, round])
 
   if (loading) return <p className="muted-text">Loading...</p>
+  if (error) return <p className="error-text">Something went wrong: {error}</p>
   if (!race || !race.race_name) return <p className="muted-text">No data found for this race.</p>
 
   // Reshape lap_data (grouped by driver) into rows grouped by lap number, for a multi-line chart
