@@ -4,13 +4,22 @@ function Schedule() {
   const [races, setRaces] = useState([])
   const [year, setYear] = useState(2024)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     setLoading(true)
+    setError(null)
     fetch(`http://127.0.0.1:5000/api/schedule?year=${year}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to load schedule')
+        return res.json()
+      })
       .then((data) => {
         setRaces(data)
+        setLoading(false)
+      })
+      .catch((err) => {
+        setError(err.message)
         setLoading(false)
       })
   }, [year])
@@ -20,6 +29,10 @@ function Schedule() {
       <h2 className="page-title">{year} Race Schedule</h2>
       {loading ? (
         <p className="muted-text">Loading...</p>
+      ) : error ? (
+        <p className="error-text">Something went wrong: {error}</p>
+      ) : races.length === 0 ? (
+        <p className="muted-text">No races found for {year}.</p>
       ) : (
         <table className="data-table">
           <thead>
