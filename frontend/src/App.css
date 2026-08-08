@@ -188,3 +188,7 @@ body {
   padding: 16px;
   margin-bottom: 20px;
 }
+
+.error-text {
+  color: var(--accent);
+}
