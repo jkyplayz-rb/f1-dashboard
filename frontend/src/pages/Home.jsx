@@ -3,11 +3,16 @@ import { Link } from 'react-router-dom'
 
 function Home() {
   const [liveStatus, setLiveStatus] = useState(null)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     fetch('http://127.0.0.1:5000/api/live-status')
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to load live status')
+        return res.json()
+      })
       .then((data) => setLiveStatus(data))
+      .catch((err) => setError(err.message))
   }, [])
 
   return (
@@ -16,7 +21,9 @@ function Home() {
         <div className="stat-label">
           {liveStatus?.is_live ? 'Live now' : 'Most recent session'}
         </div>
-        {liveStatus ? (
+        {error ? (
+          <div className="error-text">Something went wrong: {error}</div>
+        ) : liveStatus ? (
           <>
             <div className="stat-value">{liveStatus.session_name}</div>
             <div className="stat-sub">
