@@ -192,3 +192,19 @@ body {
 .error-text {
   color: var(--accent);
 }
+
+.nav-links {
+  display: flex;
+  gap: 14px;
+  margin-left: 16px;
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.nav-links a:hover {
+  color: var(--text);
+}
