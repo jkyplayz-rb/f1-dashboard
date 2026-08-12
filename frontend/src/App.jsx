@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Link } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import Schedule from './pages/Schedule.jsx'
 import RaceDetail from './pages/RaceDetail.jsx'
@@ -26,6 +26,10 @@ function App() {
         <div className="header-left">
           <span className="accent-bar"></span>
           <span className="app-title">F1 Dashboard</span>
+          <nav className="nav-links">
+            <Link to="/">Home</Link>
+            <Link to="/schedule">Schedule</Link>
+          </nav>
         </div>
         <div className="live-status">
           <span className={`live-dot ${liveStatus?.is_live ? 'is-live' : ''}`}></span>
