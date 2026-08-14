@@ -25,7 +25,7 @@ function App() {
       <header className="app-header">
         <div className="header-left">
           <span className="accent-bar"></span>
-          <span className="app-title">F1 Dashboard</span>
+          <Link to="/" className="app-title">F1 Dashboard</Link>
           <nav className="nav-links">
             <Link to="/">Home</Link>
             <Link to="/schedule">Schedule</Link>

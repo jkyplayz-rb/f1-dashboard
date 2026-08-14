@@ -208,3 +208,8 @@ body {
 .nav-links a:hover {
   color: var(--text);
 }
+
+.app-title {
+  text-decoration: none;
+  color: inherit;
+}
