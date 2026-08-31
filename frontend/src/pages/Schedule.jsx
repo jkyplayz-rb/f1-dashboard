@@ -28,7 +28,7 @@ function Schedule() {
     <div className="schedule-page">
       <h2 className="page-title">{year} Race Schedule</h2>
       {loading ? (
-        <p className="muted-text">Loading...</p>
+        <p className="muted-text"><span className="spinner"></span>Loading...</p>
       ) : error ? (
         <p className="error-text">Something went wrong: {error}</p>
       ) : races.length === 0 ? (
