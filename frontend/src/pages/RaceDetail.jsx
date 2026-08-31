@@ -42,7 +42,7 @@ function RaceDetail() {
       })
   }, [year, round])
 
-  if (loading) return <p className="muted-text">Loading...</p>
+  if (loading) return <p className="muted-text"><span className="spinner"></span>Loading...</p>
   if (error) return <p className="error-text">Something went wrong: {error}</p>
   if (!race || !race.race_name) return <p className="muted-text">No data found for this race.</p>
 

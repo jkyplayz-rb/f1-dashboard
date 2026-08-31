@@ -31,7 +31,7 @@ function Home() {
             </div>
           </>
         ) : (
-          <div className="stat-sub">Loading...</div>
+          <div className="stat-sub"><span className="spinner"></span>Loading...</div>
         )}
       </div>
 
