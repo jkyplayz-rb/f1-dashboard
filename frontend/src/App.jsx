@@ -26,9 +26,9 @@ function App() {
         <div className="header-left">
           <span className="accent-bar"></span>
           <Link to="/" className="app-title">F1 Dashboard</Link>
-          <nav className="nav-links">
-            <Link to="/">Home</Link>
-            <Link to="/schedule">Schedule</Link>
+          <nav className="nav-links" aria-label="Main navigation">
+            <Link to="/" aria-label="Go to home page">Home</Link>
+            <Link to="/schedule" aria-label="Go to race schedule">Schedule</Link>
           </nav>
         </div>
         <div className="live-status">
