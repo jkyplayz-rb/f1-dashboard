@@ -50,6 +50,11 @@ function App() {
           <Route path="/race/:year/:round" element={<RaceDetail />} />
         </Routes>
       </main>
+      <footer className="app-footer">
+        <a href="https://github.com/jkyplayz-rb/f1-dashboard" target="_blank" rel="noopener noreferrer">
+          View on GitHub
+        </a>
+      </footer>
     </div>
   )
 }

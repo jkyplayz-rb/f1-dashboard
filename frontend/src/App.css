@@ -231,3 +231,18 @@ body {
     transform: rotate(360deg);
   }
 }
+
+.app-footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+}
+
+.app-footer a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.app-footer a:hover {
+  color: var(--text-secondary);
+}
