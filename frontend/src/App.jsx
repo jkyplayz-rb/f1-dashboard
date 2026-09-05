@@ -10,7 +10,7 @@ function App() {
 
   useEffect(() => {
     const fetchStatus = () => {
-      fetch('http://127.0.0.1:5000/api/live-status')
+      fetch(`${import.meta.env.VITE_API_URL}/api/live-status`)
         .then((res) => res.json())
         .then((data) => setLiveStatus(data))
     }

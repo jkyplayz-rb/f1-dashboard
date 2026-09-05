@@ -6,7 +6,7 @@ function Home() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/api/live-status')
+    fetch(`${import.meta.env.VITE_API_URL}/api/live-status`)
       .then((res) => {
         if (!res.ok) throw new Error('Failed to load live status')
         return res.json()
