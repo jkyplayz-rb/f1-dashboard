@@ -27,7 +27,7 @@ function RaceDetail() {
   useEffect(() => {
     setLoading(true)
     setError(null)
-    fetch(`http://127.0.0.1:5000/api/race/${year}/${round}`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/race/${year}/${round}`)
       .then((res) => {
         if (!res.ok) throw new Error('Failed to load race data')
         return res.json()

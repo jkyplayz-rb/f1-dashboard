@@ -9,7 +9,7 @@ function Schedule() {
   useEffect(() => {
     setLoading(true)
     setError(null)
-    fetch(`http://127.0.0.1:5000/api/schedule?year=${year}`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/schedule?year=${year}`)
       .then((res) => {
         if (!res.ok) throw new Error('Failed to load schedule')
         return res.json()
