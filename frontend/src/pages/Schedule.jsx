@@ -26,7 +26,17 @@ function Schedule() {
 
   return (
     <div className="schedule-page">
-      <h2 className="page-title">{year} Race Schedule</h2>
+      <div className="schedule-header">
+        <h2 className="page-title">{year} Race Schedule</h2>
+        <input
+          type="number"
+          className="year-input"
+          min={2023}
+          max={new Date().getFullYear()}
+          value={year}
+          onChange={(e) => setYear(Number(e.target.value))}
+        />
+      </div>
       {loading ? (
         <p className="muted-text"><span className="spinner"></span>Loading...</p>
       ) : error ? (
