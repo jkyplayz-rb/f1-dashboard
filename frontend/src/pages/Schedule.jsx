@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 function Schedule() {
   const [races, setRaces] = useState([])
   const [year, setYear] = useState(2024)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     setLoading(true)
@@ -53,8 +55,12 @@ function Schedule() {
             </tr>
           </thead>
           <tbody>
-            {races.map((race) => (
-              <tr key={race.session_key}>
+            {races.map((race, index) => (
+              <tr
+                key={race.session_key}
+                className="clickable-row"
+                onClick={() => navigate(`/race/${year}/${index + 1}`)}
+              >
                 <td>{race.location}</td>
                 <td className="muted-text">{race.country_name}</td>
                 <td className="muted-text tabular">

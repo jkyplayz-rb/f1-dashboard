@@ -263,3 +263,7 @@ body {
   font-size: 13px;
   width: 80px;
 }
+
+.clickable-row {
+  cursor: pointer;
+}
