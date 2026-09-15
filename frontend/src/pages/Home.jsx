@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 function Home() {
   const [liveStatus, setLiveStatus] = useState(null)
   const [error, setError] = useState(null)
+  const [upcoming, setUpcoming] = useState([])
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/live-status`)
@@ -13,6 +14,20 @@ function Home() {
       })
       .then((data) => setLiveStatus(data))
       .catch((err) => setError(err.message))
+  }, [])
+
+  useEffect(() => {
+    const year = new Date().getFullYear()
+    fetch(`${import.meta.env.VITE_API_URL}/api/schedule?year=${year}`)
+      .then((res) => res.json())
+      .then((races) => {
+        const now = new Date()
+        const next = races
+          .filter((r) => new Date(r.date_start) > now)
+          .slice(0, 4)
+        setUpcoming(next)
+      })
+      .catch(() => setUpcoming([]))
   }, [])
 
   return (
@@ -34,6 +49,22 @@ function Home() {
           <div className="stat-sub"><span className="spinner"></span>Loading...</div>
         )}
       </div>
+
+      {upcoming.length > 0 && (
+        <div className="upcoming-races">
+          <div className="page-title">Upcoming Races</div>
+          <ul className="upcoming-list">
+            {upcoming.map((race) => (
+              <li key={race.session_key} className="upcoming-item">
+                <span>{race.location}</span>
+                <span className="muted-text tabular">
+                  {new Date(race.date_start).toLocaleDateString()}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <Link to="/schedule" className="home-link">
         View full race schedule →
