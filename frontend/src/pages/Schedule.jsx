@@ -26,6 +26,8 @@ function Schedule() {
       })
   }, [year])
 
+  const now = new Date()
+
   return (
     <div className="schedule-page">
       <div className="schedule-header">
@@ -55,19 +57,25 @@ function Schedule() {
             </tr>
           </thead>
           <tbody>
-            {races.map((race, index) => (
-              <tr
-                key={race.session_key}
-                className="clickable-row"
-                onClick={() => navigate(`/race/${year}/${index + 1}`)}
-              >
-                <td>{race.location}</td>
-                <td className="muted-text">{race.country_name}</td>
-                <td className="muted-text tabular">
-                  {new Date(race.date_start).toLocaleDateString()}
-                </td>
-              </tr>
-            ))}
+            {races.map((race, index) => {
+              const isPast = new Date(race.date_start) < now
+              return (
+                <tr
+                  key={race.session_key}
+                  className={`clickable-row ${isPast ? 'past-row' : ''}`}
+                  onClick={() => navigate(`/race/${year}/${index + 1}`)}
+                >
+                  <td>
+                    {race.location}
+                    {!isPast && <span className="upcoming-badge">Upcoming</span>}
+                  </td>
+                  <td className="muted-text">{race.country_name}</td>
+                  <td className="muted-text tabular">
+                    {new Date(race.date_start).toLocaleDateString()}
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       )}
