@@ -285,3 +285,17 @@ body {
   border-bottom: 1px solid var(--border);
   font-size: 13px;
 }
+
+.past-row {
+  opacity: 0.5;
+}
+
+.upcoming-badge {
+  margin-left: 8px;
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
