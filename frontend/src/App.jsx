@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import Schedule from './pages/Schedule.jsx'
 import RaceDetail from './pages/RaceDetail.jsx'
@@ -7,6 +7,8 @@ import './App.css'
 
 function App() {
   const [liveStatus, setLiveStatus] = useState(null)
+  const location = useLocation()
+  const isHome = location.pathname === '/'
 
   useEffect(() => {
     const fetchStatus = () => {
@@ -22,7 +24,7 @@ function App() {
 
   return (
     <div className="app">
-      <header className="app-header">
+      <header className={`app-header ${isHome ? 'app-header--overlay' : ''}`}>
         <div className="header-left">
           <span className="accent-bar"></span>
           <Link to="/" className="app-title">F1 Dashboard</Link>
