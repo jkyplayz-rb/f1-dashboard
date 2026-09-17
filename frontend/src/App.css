@@ -23,6 +23,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
 .app-header {
@@ -31,6 +32,16 @@ body {
   justify-content: space-between;
   padding: 16px 24px;
   border-bottom: 1px solid var(--border);
+}
+
+.app-header--overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: transparent;
+  border-bottom: none;
 }
 
 .header-left {
@@ -73,10 +84,10 @@ body {
 
 .app-main {
   flex: 1;
-  max-width: 1000px;
+  max-width: 1400px;
   width: 100%;
   margin: 0 auto;
-  padding: 24px;
+  padding: 24px 32px;
 }
 
 .page-title {
@@ -168,6 +179,122 @@ body {
 
 .home-status-card {
   max-width: 320px;
+}
+
+.home-hero {
+  position: relative;
+  left: 50%;
+  right: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  margin-top: -24px;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #0e0e0e url('/images/hero-bg.jpg') center 60% / cover no-repeat;
+  isolation: isolate;
+}
+
+.home-hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(14, 14, 14, 0.6) 0%,
+    rgba(14, 14, 14, 0.2) 32%,
+    rgba(14, 14, 14, 0.45) 65%,
+    rgba(14, 14, 14, 0.92) 100%
+  );
+}
+
+.home-hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  padding: 96px 24px 40px;
+  text-align: center;
+}
+
+.home-hero-live-badge {
+  display: inline-block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 2px 8px;
+  margin-bottom: 12px;
+}
+
+.home-hero-headline {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.15;
+  margin: 0 0 8px;
+}
+
+.home-hero-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 28px;
+}
+
+.home-hero-countdown {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+}
+
+.countdown-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.countdown-value {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.countdown-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.home-stats-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+
+.home-stat-card {
+  flex: 1 1 160px;
+  background: var(--surface);
+  border-radius: 4px;
+  border-left: 3px solid var(--accent);
+  padding: 12px 16px;
+}
+
+.home-stat-card--winner {
+  border-left-color: #e10600;
+}
+
+.home-stat-card--fastest {
+  border-left-color: #d4af37;
+}
+
+.home-stat-card--round {
+  border-left-color: #6b6b6b;
 }
 
 .home-link {
