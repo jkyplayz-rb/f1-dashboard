@@ -6,6 +6,7 @@ function Schedule() {
   const [year, setYear] = useState(2024)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [search, setSearch] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -28,6 +29,14 @@ function Schedule() {
 
   const now = new Date()
 
+  const filteredRaces = races.filter((race) => {
+    const query = search.toLowerCase()
+    return (
+      race.location.toLowerCase().includes(query) ||
+      race.country_name.toLowerCase().includes(query)
+    )
+  })
+
   return (
     <div className="schedule-page">
       <div className="schedule-header">
@@ -41,12 +50,21 @@ function Schedule() {
           onChange={(e) => setYear(Number(e.target.value))}
         />
       </div>
+      <input
+        type="text"
+        className="search-input"
+        placeholder="Search by location or country..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
       {loading ? (
         <p className="muted-text"><span className="spinner"></span>Loading...</p>
       ) : error ? (
         <p className="error-text">Something went wrong: {error}</p>
       ) : races.length === 0 ? (
         <p className="muted-text">No races found for {year}.</p>
+      ) : filteredRaces.length === 0 ? (
+        <p className="muted-text">No races match "{search}".</p>
       ) : (
         <table className="data-table">
           <thead>
@@ -57,13 +75,14 @@ function Schedule() {
             </tr>
           </thead>
           <tbody>
-            {races.map((race, index) => {
+            {filteredRaces.map((race) => {
+              const originalIndex = races.indexOf(race)
               const isPast = new Date(race.date_start) < now
               return (
                 <tr
                   key={race.session_key}
                   className={`clickable-row ${isPast ? 'past-row' : ''}`}
-                  onClick={() => navigate(`/race/${year}/${index + 1}`)}
+                  onClick={() => navigate(`/race/${year}/${originalIndex + 1}`)}
                 >
                   <td>
                     {race.location}
