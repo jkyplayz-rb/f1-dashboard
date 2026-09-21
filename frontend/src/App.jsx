@@ -33,15 +33,20 @@ function App() {
             <Link to="/schedule" aria-label="Go to race schedule">Schedule</Link>
           </nav>
         </div>
-        <div className="live-status">
-          <span className={`live-dot ${liveStatus?.is_live ? 'is-live' : ''}`}></span>
-          <span>
-            {!liveStatus
-              ? 'Loading status...'
-              : liveStatus.is_live
-              ? `Live: ${liveStatus.session_name} — ${liveStatus.location}`
-              : `Next: ${liveStatus.session_name} — ${liveStatus.location}`}
-          </span>
+        <div className="header-right">
+          <div className="live-status">
+            <span className={`live-dot ${liveStatus?.is_live ? 'is-live' : ''}`}></span>
+            <span>
+              {!liveStatus
+                ? 'Loading status...'
+                : liveStatus.is_live
+                ? `Live: ${liveStatus.session_name} — ${liveStatus.location}`
+                : `Next: ${liveStatus.session_name} — ${liveStatus.location}`}
+            </span>
+          </div>
+          <a href="https://github.com/jkyplayz-rb/f1-dashboard" target="_blank" rel="noopener noreferrer" className="github-link">
+            View on GitHub
+          </a>
         </div>
       </header>
 
@@ -52,11 +57,6 @@ function App() {
           <Route path="/race/:year/:round" element={<RaceDetail />} />
         </Routes>
       </main>
-      <footer className="app-footer">
-        <a href="https://github.com/jkyplayz-rb/f1-dashboard" target="_blank" rel="noopener noreferrer">
-          View on GitHub
-        </a>
-      </footer>
     </div>
   )
 }

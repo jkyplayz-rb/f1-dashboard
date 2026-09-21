@@ -438,3 +438,19 @@ body {
   margin-bottom: 16px;
   box-sizing: border-box;
 }
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.github-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.github-link:hover {
+  color: var(--text);
+}
