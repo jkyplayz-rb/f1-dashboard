@@ -41,7 +41,7 @@ function Home() {
   }, [races])
 
   useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 30000)
+    const id = setInterval(() => setNow(new Date()), 1000)
     return () => clearInterval(id)
   }, [])
 
