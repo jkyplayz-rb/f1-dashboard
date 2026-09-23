@@ -10,6 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
+import { getTeamColor } from '../teamColors'
 
 const formatLapTime = (seconds) => {
   if (seconds == null) return ''
@@ -91,7 +92,7 @@ function RaceDetail() {
         </thead>
         <tbody>
           {race.results.map((r) => (
-            <tr key={r.driver_num}>
+            <tr key={r.driver_num} style={{ borderLeft: `3px solid ${getTeamColor(r.team)}` }}>
               <td className="tabular">{r.position}</td>
               <td>{r.name}</td>
               <td className="muted-text">{r.team}</td>
