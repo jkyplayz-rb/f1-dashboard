@@ -3,6 +3,7 @@ import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import Schedule from './pages/Schedule.jsx'
 import RaceDetail from './pages/RaceDetail.jsx'
+import ScrollToTop from './ScrollToTop.jsx'
 import './App.css'
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
 
   return (
     <div className="app">
+      <ScrollToTop />
       <header className={`app-header ${isHome ? 'app-header--overlay' : ''}`}>
         <div className="header-left">
           <span className="accent-bar"></span>
