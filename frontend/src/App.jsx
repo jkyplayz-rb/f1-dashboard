@@ -4,6 +4,7 @@ import Home from './pages/Home.jsx'
 import Schedule from './pages/Schedule.jsx'
 import RaceDetail from './pages/RaceDetail.jsx'
 import ScrollToTop from './ScrollToTop.jsx'
+import Footer from './Footer.jsx'
 import './App.css'
 
 function App() {
@@ -59,6 +60,7 @@ function App() {
           <Route path="/race/:year/:round" element={<RaceDetail />} />
         </Routes>
       </main>
+      <Footer />
     </div>
   )
 }
