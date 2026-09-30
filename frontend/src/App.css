@@ -454,3 +454,17 @@ body {
 .github-link:hover {
   color: var(--text);
 }
+
+.app-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem 0;
+  font-size: 0.8rem;
+  color: #6b6b6b;
+}
+
+.footer-dot {
+  color: #3a3a3a;
+}
