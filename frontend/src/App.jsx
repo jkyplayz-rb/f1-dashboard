@@ -3,6 +3,7 @@ import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import Schedule from './pages/Schedule.jsx'
 import RaceDetail from './pages/RaceDetail.jsx'
+import NotFound from './pages/NotFound.jsx'
 import ScrollToTop from './ScrollToTop.jsx'
 import Footer from './Footer.jsx'
 import './App.css'
@@ -58,6 +59,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/race/:year/:round" element={<RaceDetail />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <Footer />
