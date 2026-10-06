@@ -130,6 +130,100 @@ def get_schedule(year):
         return []
     return res.json()
 
+def get_json(url):
+    # Returns a list on success, [] when OpenF1 has no data (404),
+    # and None when OpenF1 is unavailable (paywall during live weekends, errors, timeouts)
+    try:
+        res = cached_get(url)
+    except requests.RequestException:
+        return None
+    if res.status_code == 404:
+        return []
+    if res.status_code != 200:
+        return None
+    try:
+        return res.json()
+    except ValueError:
+        return None
+
+def format_points(points):
+    if points is not None and points == int(points):
+        return int(points)
+    return points
+
+def get_standings(year):
+    sessions = get_json(f"{OPENF1_BASE}/sessions?year={year}&session_name=Race")
+    if sessions is None:
+        return None, 'unavailable'
+
+    now = datetime.now(timezone.utc)
+    finished = [
+        s for s in sessions
+        if not s.get('is_cancelled') and datetime.fromisoformat(s['date_end']) < now
+    ]
+    if not finished:
+        return None, 'no_races'
+
+    # Standings for the newest race can take a while to be published, so also try the race before it
+    session = None
+    driver_rows = []
+    team_rows = []
+    for candidate in reversed(finished[-2:]):
+        key = candidate['session_key']
+        driver_rows = get_json(f"{OPENF1_BASE}/championship_drivers?session_key={key}")
+        team_rows = get_json(f"{OPENF1_BASE}/championship_teams?session_key={key}")
+        if driver_rows is None or team_rows is None:
+            return None, 'unavailable'
+        if driver_rows and team_rows:
+            session = candidate
+            break
+    if session is None:
+        return None, 'no_standings'
+
+    session_key = session['session_key']
+    drivers = get_json(f"{OPENF1_BASE}/drivers?session_key={session_key}")
+    if drivers is None:
+        return None, 'unavailable'
+    driver_map = {}
+    for d in drivers:
+        driver_map[d['driver_number']] = d
+
+    # Drivers who did not take part in this race are looked up in their most recent earlier session
+    for row in driver_rows:
+        drv_num = row['driver_number']
+        if drv_num not in driver_map:
+            history = get_json(f"{OPENF1_BASE}/drivers?driver_number={drv_num}&session_key<={session_key}")
+            if history:
+                driver_map[drv_num] = max(history, key=lambda d: d['session_key'])
+
+    driver_standings = []
+    for row in sorted(driver_rows, key=lambda r: r['position_current']):
+        drv_num = row['driver_number']
+        d = driver_map.get(drv_num, {})
+        driver_standings.append({
+            'position': row['position_current'],
+            'driver_num': drv_num,
+            'name': d.get('full_name', f"Driver #{drv_num}"),
+            'team': d.get('team_name', 'Unknown'),
+            'points': format_points(row['points_current']),
+        })
+
+    constructor_standings = []
+    for row in sorted(team_rows, key=lambda r: r['position_current']):
+        constructor_standings.append({
+            'position': row['position_current'],
+            'team': row['team_name'],
+            'points': format_points(row['points_current']),
+        })
+
+    return {
+        'year': year,
+        'round': finished.index(session) + 1,
+        'race_name': session['location'],
+        'drivers': driver_standings,
+        'constructors': constructor_standings,
+    }, None
+
 def get_live_status():
     res = requests.get(f"{OPENF1_BASE}/sessions?session_key=latest", timeout=15)
     if res.status_code != 200:
@@ -168,6 +262,21 @@ def api_race(year, round_num):
         'fastest_lap': fastest_lap,
         'pit_stops': pit_stops,
     })
+
+@app.route('/api/standings/<int:year>')
+def api_standings(year):
+    current_year = datetime.now(timezone.utc).year
+    if year < 2023 or year > current_year:
+        return jsonify({'error': f"Standings are only available from 2023 to {current_year}."}), 400
+
+    standings, error = get_standings(year)
+    if error == 'unavailable':
+        return jsonify({'error': 'Live data is temporarily unavailable during race weekends. Please try again later.'}), 503
+    if error == 'no_races':
+        return jsonify({'error': f"No races have been completed in {year} yet."}), 404
+    if error == 'no_standings':
+        return jsonify({'error': f"No standings data available for {year}."}), 404
+    return jsonify(standings)
 
 @app.route('/api/live-status')
 def api_live_status():
