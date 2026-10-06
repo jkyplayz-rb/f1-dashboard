@@ -3,6 +3,7 @@ import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import Schedule from './pages/Schedule.jsx'
 import RaceDetail from './pages/RaceDetail.jsx'
+import Standings from './pages/Standings.jsx'
 import NotFound from './pages/NotFound.jsx'
 import ScrollToTop from './ScrollToTop.jsx'
 import Footer from './Footer.jsx'
@@ -35,6 +36,7 @@ function App() {
           <nav className="nav-links" aria-label="Main navigation">
             <Link to="/" aria-label="Go to home page">Home</Link>
             <Link to="/schedule" aria-label="Go to race schedule">Schedule</Link>
+            <Link to="/standings" aria-label="Go to championship standings">Standings</Link>
           </nav>
         </div>
         <div className="header-right">
@@ -59,6 +61,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/race/:year/:round" element={<RaceDetail />} />
+          <Route path="/standings" element={<Standings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
