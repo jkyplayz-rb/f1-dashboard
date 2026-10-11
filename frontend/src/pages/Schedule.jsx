@@ -2,29 +2,32 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 function Schedule() {
-  const [races, setRaces] = useState([])
   const [year, setYear] = useState(2024)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [result, setResult] = useState({ year: null, races: [], error: null })
   const [search, setSearch] = useState('')
   const navigate = useNavigate()
 
+  const loading = result.year !== year
+  const { races, error } = result
+
   useEffect(() => {
-    setLoading(true)
-    setError(null)
+    let ignore = false
+
     fetch(`${import.meta.env.VITE_API_URL}/api/schedule?year=${year}`)
       .then((res) => {
         if (!res.ok) throw new Error('Failed to load schedule')
         return res.json()
       })
       .then((data) => {
-        setRaces(data)
-        setLoading(false)
+        if (!ignore) setResult({ year, races: data, error: null })
       })
       .catch((err) => {
-        setError(err.message)
-        setLoading(false)
+        if (!ignore) setResult({ year, races: [], error: err.message })
       })
+
+    return () => {
+      ignore = true
+    }
   }, [year])
 
   const now = new Date()
