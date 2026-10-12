@@ -21,26 +21,30 @@ const formatLapTime = (seconds) => {
 
 function RaceDetail() {
   const { year, round } = useParams()
-  const [race, setRace] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [result, setResult] = useState({ key: null, race: null, error: null })
+
+  const raceKey = `${year}/${round}`
+  const loading = result.key !== raceKey
+  const { race, error } = result
 
   useEffect(() => {
-    setLoading(true)
-    setError(null)
+    let ignore = false
+
     fetch(`${import.meta.env.VITE_API_URL}/api/race/${year}/${round}`)
       .then((res) => {
         if (!res.ok) throw new Error('Failed to load race data')
         return res.json()
       })
       .then((data) => {
-        setRace(data)
-        setLoading(false)
+        if (!ignore) setResult({ key: `${year}/${round}`, race: data, error: null })
       })
       .catch((err) => {
-        setError(err.message)
-        setLoading(false)
+        if (!ignore) setResult({ key: `${year}/${round}`, race: null, error: err.message })
       })
+
+    return () => {
+      ignore = true
+    }
   }, [year, round])
 
   if (loading) return <p className="muted-text"><span className="spinner"></span>Loading...</p>
