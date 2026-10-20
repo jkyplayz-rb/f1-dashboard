@@ -26,6 +26,18 @@ function App() {
     return () => clearInterval(interval)
   }, [])
 
+  const getStatusText = () => {
+    if (!liveStatus) return 'Loading status...'
+    if (!liveStatus.session_name || !liveStatus.location || !liveStatus.date_end) {
+      return 'Status unavailable'
+    }
+    if (liveStatus.is_live) {
+      return `Live: ${liveStatus.session_name} — ${liveStatus.location}`
+    }
+    const prefix = new Date(liveStatus.date_end) < new Date() ? 'Last' : 'Next'
+    return `${prefix}: ${liveStatus.session_name} — ${liveStatus.location}`
+  }
+
   return (
     <div className="app">
       <ScrollToTop />
@@ -42,13 +54,7 @@ function App() {
         <div className="header-right">
           <div className="live-status">
             <span className={`live-dot ${liveStatus?.is_live ? 'is-live' : ''}`}></span>
-            <span>
-              {!liveStatus
-                ? 'Loading status...'
-                : liveStatus.is_live
-                ? `Live: ${liveStatus.session_name} — ${liveStatus.location}`
-                : `Next: ${liveStatus.session_name} — ${liveStatus.location}`}
-            </span>
+            <span>{getStatusText()}</span>
           </div>
           <a href="https://github.com/jkyplayz-rb/f1-dashboard" target="_blank" rel="noopener noreferrer" className="github-link">
             View on GitHub
