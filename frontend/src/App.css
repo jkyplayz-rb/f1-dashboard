@@ -126,6 +126,7 @@ body {
 
 .data-table td {
   padding: 8px;
+  text-align: left;
   border-top: 1px solid var(--border);
 }
 
