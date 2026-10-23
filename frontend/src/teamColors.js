@@ -10,7 +10,7 @@ export const teamColors = {
   'Kick Sauber': '#52E252',
   'Haas F1 Team': '#B6BABD',
   'Racing Bulls': '#6C98FF',
-  'Audi': '#F50537',
+  'Audi': '#8C1D40',
   'Cadillac': '#909090',
   'AlphaTauri': '#5E8FAA',
   'Alfa Romeo': '#C92D4B',
