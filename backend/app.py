@@ -271,7 +271,7 @@ def api_standings(year):
 
     standings, error = get_standings(year)
     if error == 'unavailable':
-        return jsonify({'error': 'Live data is temporarily unavailable during race weekends. Please try again later.'}), 503
+        return jsonify({'error': 'Race data is temporarily unavailable. OpenF1 may be restricting access during a live race weekend, or it may be down. Please try again later.'}), 503
     if error == 'no_races':
         return jsonify({'error': f"No races have been completed in {year} yet."}), 404
     if error == 'no_standings':
