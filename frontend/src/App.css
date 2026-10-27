@@ -576,4 +576,8 @@ body {
   .home-hero-content {
     padding-top: 144px;
   }
+
+  .app-main {
+    padding: 24px 16px;
+  }
 }
