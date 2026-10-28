@@ -361,21 +361,6 @@ body {
   }
 }
 
-.app-footer {
-  text-align: center;
-  padding: 20px;
-  font-size: 12px;
-}
-
-.app-footer a {
-  color: var(--text-muted);
-  text-decoration: none;
-}
-
-.app-footer a:hover {
-  color: var(--text-secondary);
-}
-
 .schedule-header {
   display: flex;
   align-items: center;
