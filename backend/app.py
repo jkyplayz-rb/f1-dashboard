@@ -83,7 +83,7 @@ def get_race_results(year, round_num):
     sessions = cached_get(f"{OPENF1_BASE}/sessions?year={year}&session_name=Race")
     if sessions.status_code != 200:
         return None, [], {}, {}, None, []
-    session_list = sessions.json()
+    session_list = [s for s in sessions.json() if not s.get('is_cancelled')]
     if not session_list or round_num > len(session_list):
         return None, [], {}, {}, None, []
     session = session_list[round_num - 1]
@@ -128,7 +128,7 @@ def get_schedule(year):
     res = cached_get(f"{OPENF1_BASE}/sessions?year={year}&session_name=Race")
     if res.status_code != 200:
         return []
-    return res.json()
+    return [s for s in res.json() if not s.get('is_cancelled')]
 
 def get_json(url):
     # Returns a list on success, [] when OpenF1 has no data (404),
