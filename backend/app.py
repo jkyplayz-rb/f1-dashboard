@@ -83,7 +83,7 @@ def get_race_results(year, round_num):
     sessions = cached_get(f"{OPENF1_BASE}/sessions?year={year}&session_name=Race")
     if sessions.status_code != 200:
         return None, [], {}, {}, None, []
-    session_list = [s for s in sessions.json() if not s.get('is_cancelled')]
+    session_list = sessions.json()
     if not session_list or round_num > len(session_list):
         return None, [], {}, {}, None, []
     session = session_list[round_num - 1]
@@ -128,7 +128,7 @@ def get_schedule(year):
     res = cached_get(f"{OPENF1_BASE}/sessions?year={year}&session_name=Race")
     if res.status_code != 200:
         return []
-    return [s for s in res.json() if not s.get('is_cancelled')]
+    return res.json()
 
 def get_json(url):
     # Returns a list on success, [] when OpenF1 has no data (404),
@@ -247,9 +247,14 @@ def get_live_status():
 
 @app.route('/api/schedule')
 def api_schedule():
-    year = int(request.args.get('year', '2024'))
-    schedule = get_schedule(year)
-    return jsonify(schedule)
+    current_year = datetime.now(timezone.utc).year
+    try:
+        year = int(request.args.get('year', '2024'))
+    except ValueError:
+        return jsonify({'error': 'Year must be a number.'}), 400
+    if year < 2023 or year > current_year:
+        return jsonify({'error': f"Schedule is only available from 2023 to {current_year}."}), 400
+    return jsonify(get_schedule(year))
 
 @app.route('/api/race/<int:year>/<int:round_num>')
 def api_race(year, round_num):
