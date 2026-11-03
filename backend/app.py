@@ -9,6 +9,8 @@ CORS(app)
 
 OPENF1_BASE = "https://api.openf1.org/v1"
 
+MIN_YEAR = 2023
+
 _cache = {}
 CACHE_TTL = 300  # 5 minutes
 
@@ -83,7 +85,7 @@ def get_race_results(year, round_num):
     sessions = cached_get(f"{OPENF1_BASE}/sessions?year={year}&session_name=Race")
     if sessions.status_code != 200:
         return None, [], {}, {}, None, []
-    session_list = sessions.json()
+    session_list = [s for s in sessions.json() if not s.get('is_cancelled')]
     if not session_list or round_num > len(session_list):
         return None, [], {}, {}, None, []
     session = session_list[round_num - 1]
@@ -128,7 +130,7 @@ def get_schedule(year):
     res = cached_get(f"{OPENF1_BASE}/sessions?year={year}&session_name=Race")
     if res.status_code != 200:
         return []
-    return res.json()
+    return [s for s in res.json() if not s.get('is_cancelled')]
 
 def get_json(url):
     # Returns a list on success, [] when OpenF1 has no data (404),
@@ -150,6 +152,9 @@ def format_points(points):
     if points is not None and points == int(points):
         return int(points)
     return points
+
+def is_valid_year(year):
+    return MIN_YEAR <= year <= datetime.now(timezone.utc).year
 
 def get_standings(year):
     sessions = get_json(f"{OPENF1_BASE}/sessions?year={year}&session_name=Race")
@@ -247,13 +252,13 @@ def get_live_status():
 
 @app.route('/api/schedule')
 def api_schedule():
-    current_year = datetime.now(timezone.utc).year
     try:
         year = int(request.args.get('year', '2024'))
     except ValueError:
         return jsonify({'error': 'Year must be a number.'}), 400
-    if year < 2023 or year > current_year:
-        return jsonify({'error': f"Schedule is only available from 2023 to {current_year}."}), 400
+    if not is_valid_year(year):
+        current_year = datetime.now(timezone.utc).year
+        return jsonify({'error': f"Schedule is only available from {MIN_YEAR} to {current_year}."}), 400
     return jsonify(get_schedule(year))
 
 @app.route('/api/race/<int:year>/<int:round_num>')
@@ -270,9 +275,9 @@ def api_race(year, round_num):
 
 @app.route('/api/standings/<int:year>')
 def api_standings(year):
-    current_year = datetime.now(timezone.utc).year
-    if year < 2023 or year > current_year:
-        return jsonify({'error': f"Standings are only available from 2023 to {current_year}."}), 400
+    if not is_valid_year(year):
+        current_year = datetime.now(timezone.utc).year
+        return jsonify({'error': f"Standings are only available from {MIN_YEAR} to {current_year}."}), 400
 
     standings, error = get_standings(year)
     if error == 'unavailable':
