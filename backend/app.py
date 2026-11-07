@@ -263,6 +263,9 @@ def api_schedule():
 
 @app.route('/api/race/<int:year>/<int:round_num>')
 def api_race(year, round_num):
+    if not is_valid_year(year):
+        current_year = datetime.now(timezone.utc).year
+        return jsonify({'error': f"Race results are only available from {MIN_YEAR} to {current_year}."}), 400
     race_name, results, lap_data, top5_names, fastest_lap, pit_stops = get_race_results(year, round_num)
     return jsonify({
         'race_name': race_name,
